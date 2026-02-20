@@ -17,16 +17,53 @@ const SignIn = () => {
         e.preventDefault()
         setIsLoading(true)
         setError(null)
+        
+        // Client-side email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address')
+            toast.error('Please enter a valid email address')
+            setIsLoading(false)
+            return
+        }
+
+        // Client-side password validation
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long')
+            toast.error('Password must be at least 6 characters long')
+            setIsLoading(false)
+            return
+        }
+
         const { error } = await authClient.signIn.email({
             email,
             password,
             rememberMe: true
         })
+        
         if (error) {
-            setError(error.message || 'An unknown error occurred')
+            // Provide user-friendly error messages
+            let errorMessage = 'Sign in failed. Please try again.'
+            
+            if (error.message?.toLowerCase().includes('invalid') || 
+                error.message?.toLowerCase().includes('credentials') ||
+                error.message?.toLowerCase().includes('email') ||
+                error.message?.toLowerCase().includes('password')) {
+                errorMessage = 'Invalid email or password. Please check your credentials and try again.'
+            } else if (error.message?.toLowerCase().includes('not found')) {
+                errorMessage = 'No account found with this email. Please sign up first.'
+            } else if (error.message?.toLowerCase().includes('network') || 
+                       error.message?.toLowerCase().includes('connection')) {
+                errorMessage = 'Network error. Please check your internet connection.'
+            } else if (error.message) {
+                errorMessage = error.message
+            }
+            
+            setError(errorMessage)
+            toast.error(errorMessage)
             setIsLoading(false)
         } else {
-            toast.success('Sign in successful!')
+            toast.success('Welcome back! Sign in successful.')
             router.push('/dashboard')
         }
     }
@@ -41,9 +78,22 @@ const SignIn = () => {
         setIsLoading(false)
         if(error)
         {
-            setError(error.message || 'An unknown error occurred')
+            let errorMessage = `Failed to sign in with ${provider === 'google' ? 'Google' : 'GitHub'}. Please try again.`
+            
+            if (error.message?.toLowerCase().includes('popup') || 
+                error.message?.toLowerCase().includes('window')) {
+                errorMessage = 'Pop-up blocked. Please allow pop-ups and try again.'
+            } else if (error.message?.toLowerCase().includes('cancelled') || 
+                       error.message?.toLowerCase().includes('closed')) {
+                errorMessage = 'Sign in cancelled. Please try again if you want to continue.'
+            } else if (error.message) {
+                errorMessage = error.message
+            }
+            
+            setError(errorMessage)
+            toast.error(errorMessage)
         }else{
-            toast.success('Sign in successful!')
+            toast.success(`Successfully signed in with ${provider === 'google' ? 'Google' : 'GitHub'}!`)
             // router.push('/dashboard')
         }
     }
@@ -119,7 +169,16 @@ const SignIn = () => {
                         )}
                         {isLoading ? 'Signing In...' : 'Sign In'}
                     </button>
-                    {error && <p className='text-red-600 text-sm mt-2'>{error}</p>}
+                    {error && (
+                        <div className='bg-red-50 border-2 border-red-300 rounded-lg p-3 mt-3'>
+                            <div className='flex items-start gap-2'>
+                                <svg className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
+                                </svg>
+                                <p className='text-red-700 text-sm font-medium'>{error}</p>
+                            </div>
+                        </div>
+                    )}
                 </form>
 
                 {/* Divider */}
