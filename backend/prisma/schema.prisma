@@ -15,14 +15,15 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String   @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean  @default(false)
   image         String?
-  role          String    @default("user")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  role          String   @default("user")
+  password      String?  @default("")  // optional, Better Auth stores passwords in Account table
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   sessions      Session[]
   accounts      Account[]
 

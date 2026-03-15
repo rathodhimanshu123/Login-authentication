@@ -46,6 +46,7 @@ const SignUp = () => {
             const data = await response.json();
 
             if (!response.ok) {
+                console.error('Sign-up error response:', data);
                 throw new Error(data.message || 'Sign up failed');
             }
 
@@ -108,7 +109,7 @@ const SignUp = () => {
                                 type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder='Enter your password'
+                                placeholder='Min 8 chars: A-Z, a-z, 0-9, special char'
                                 className='w-full border-2 border-purple-300 p-3 pr-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500'
                                 required
                             />
@@ -129,6 +130,16 @@ const SignUp = () => {
                                     </svg>
                                 )}
                             </button>
+                        </div>
+                        <div className='mt-2 text-xs text-gray-600 bg-gray-50 p-3 rounded'>
+                            <p className='font-semibold mb-1'>Password requirements:</p>
+                            <ul className='space-y-1'>
+                                <li className={password.length >= 8 ? '✓ text-green-600' : '✗ text-gray-500'}>Min 8 characters</li>
+                                <li className={/[A-Z]/.test(password) ? '✓ text-green-600' : '✗ text-gray-500'}>At least one uppercase letter</li>
+                                <li className={/[a-z]/.test(password) ? '✓ text-green-600' : '✗ text-gray-500'}>At least one lowercase letter</li>
+                                <li className={/[0-9]/.test(password) ? '✓ text-green-600' : '✗ text-gray-500'}>At least one number</li>
+                                <li className={/[^A-Za-z0-9]/.test(password) ? '✓ text-green-600' : '✗ text-gray-500'}>At least one special character (@, #, $, etc)</li>
+                            </ul>
                         </div>
                     </div>
                     <div>

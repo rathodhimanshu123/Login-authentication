@@ -18,6 +18,66 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Request logging middleware
+app.use((req, res, next) => {
+  const originalSend = res.send;
+  
+  res.send = function(data) {
+    // Check if this is a successful sign-up request
+    if (req.path === '/api/auth/sign-up/email' && req.method === 'POST' && res.statusCode === 200) {
+      try {
+        const responseData = typeof data === 'string' ? JSON.parse(data) : data;
+        if (responseData?.user?.id) {
+          // Store the user ID for the after-request handler
+          (res as any).newUserId = responseData.user.id;
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+    
+    if (res.statusCode >= 400) {
+      console.error(`[${res.statusCode}] ${req.method} ${req.path}`, {
+        body: req.body,
+        error: typeof data === 'string' ? data : JSON.stringify(data)
+      });
+    }
+    res.send = originalSend;
+    return res.send(data);
+  };
+  
+  next();
+});
+
+// After-response middleware to copy password hash to User table
+app.use((req, res, next) => {
+  res.on('finish', async () => {
+    if (req.path === '/api/auth/sign-up/email' && req.method === 'POST' && res.statusCode === 200) {
+      try {
+        const userId = (res as any).newUserId;
+        if (userId) {
+          // Get the account with password hash
+          const account = await prisma.account.findFirst({
+            where: { userId }
+          });
+          
+          if (account?.password) {
+            // Update user's password field with the hash from account
+            await prisma.user.update({
+              where: { id: userId },
+              data: { password: account.password }
+            });
+            console.log(`✅ Password hash stored in User table for user: ${userId}`);
+          }
+        }
+      } catch (error) {
+        console.error("Error storing password in User table:", error);
+      }
+    }
+  });
+  
+  next();
+});
 // Better Auth handler - handles all /api/auth/* routes
 app.use('/api/auth', toNodeHandler(auth));
 
@@ -143,7 +203,51 @@ app.use('/api/send-otp', async (req, res) => {
     });
   }
 });
-
+// Sync password hashes from Account table to User table
+app.post('/api/sync-passwords', async (req, res) => {
+  try {
+    console.log('🔄 Syncing password hashes from Account to User table...');
+    
+    // Get all users and their accounts
+    const users = await prisma.user.findMany({
+      include: {
+        accounts: {
+          where: {
+            password: { not: null }
+          }
+        }
+      }
+    });
+    
+    let syncedCount = 0;
+    for (const user of users) {
+      if (user.accounts.length > 0 && user.accounts[0].password) {
+        const account = user.accounts[0];
+        const passwordHash = account.password as string;
+        
+        // Only update if User.password is empty
+        if (!user.password || user.password.length === 0) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { password: passwordHash }
+          });
+          syncedCount++;
+          console.log(`✅ Synced password for user: ${user.email}`);
+        }
+      }
+    }
+    
+    return res.json({
+      success: true,
+      message: `Synced passwords for ${syncedCount} users`
+    });
+  } catch (error: any) {
+    console.error('Error syncing passwords:', error);
+    return res.status(500).json({
+      error: error.message || 'Failed to sync passwords'
+    });
+  }
+});
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend server is running' });
