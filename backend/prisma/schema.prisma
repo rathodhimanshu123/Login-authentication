@@ -20,7 +20,7 @@ model User {
   email         String
   emailVerified Boolean  @default(false)
   image         String?
-  role          String   @default("user")
+  role          String   @default("Operations User")
   password      String?  @default("")  // optional, Better Auth stores passwords in Account table
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

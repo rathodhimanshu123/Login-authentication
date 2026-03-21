@@ -6,6 +6,8 @@ import { passwordSchema } from "./validation.js";
 import { emailOTP } from "better-auth/plugins";
 import nodemailer from "nodemailer";
 
+const ALLOWED_ROLES = ["Engineering User", "Approver", "Operations User", "Admin"] as const;
+
 export const auth = betterAuth({
     database: prismaAdapter(prisma,{
         provider: "postgresql",
@@ -29,7 +31,7 @@ export const auth = betterAuth({
                 type: "string",
                 required: false,
                 input: true,
-                defaultValue: "user",
+                defaultValue: "Operations User",
             }
         }
     },
@@ -116,6 +118,14 @@ export const auth = betterAuth({
                 {
                     throw new APIError("BAD_REQUEST", {
                         message: "Password not strong enough",
+                    });
+                }
+            }
+            if (ctx.path === "sign-up/email") {
+                const role = ctx.body.role;
+                if (role && !ALLOWED_ROLES.includes(role)) {
+                    throw new APIError("BAD_REQUEST", {
+                        message: `Invalid role. Allowed roles: ${ALLOWED_ROLES.join(", ")}`,
                     });
                 }
             }

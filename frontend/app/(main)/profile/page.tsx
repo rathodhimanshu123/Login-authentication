@@ -57,7 +57,7 @@ const ProfilePage = () => {
         return null
     }
 
-    const isAdmin = user.role === 'admin'
+    const isAdmin = user.role === 'Admin'
     const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -116,7 +116,7 @@ const ProfilePage = () => {
                                     <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>
                                         <path fillRule='evenodd' d='M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z' clipRule='evenodd' />
                                     </svg>
-                                    {isAdmin ? 'Admin' : 'User'}
+                                    {user.role || 'Operations User'}
                                 </span>
                                 <span className='flex items-center gap-1'>
                                     <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>
@@ -232,7 +232,7 @@ const ProfilePage = () => {
                                     </div>
                                     <div className='flex-1 min-w-0'>
                                         <p className='text-xs text-gray-500 uppercase font-medium mb-1'>Role</p>
-                                        <p className='text-sm text-gray-900 font-semibold uppercase'>{user.role || 'user'}</p>
+                                        <p className='text-sm text-gray-900 font-semibold uppercase'>{user.role || 'Operations User'}</p>
                                     </div>
                                 </div>
 
@@ -282,7 +282,7 @@ const ProfilePage = () => {
                                             </svg>
                                             <span className='text-sm text-gray-600'>Account Role</span>
                                         </div>
-                                        <p className='text-lg font-bold text-gray-900 uppercase'>{isAdmin ? 'Admin' : 'User'}</p>
+                                        <p className='text-lg font-bold text-gray-900 uppercase'>{user.role || 'Operations User'}</p>
                                     </div>
                                 </div>
 
@@ -318,7 +318,7 @@ const ProfilePage = () => {
                                             <div className='flex items-center gap-3'>
                                                 <div className='w-2 h-2 bg-purple-600 rounded-full'></div>
                                                 <div>
-                                                    <p className='text-sm font-medium text-gray-900'>Role assigned: {isAdmin ? 'Administrator' : 'User'}</p>
+                                                    <p className='text-sm font-medium text-gray-900'>Role assigned: {user.role || 'Operations User'}</p>
                                                     <p className='text-xs text-gray-500'>Account type set</p>
                                                 </div>
                                             </div>

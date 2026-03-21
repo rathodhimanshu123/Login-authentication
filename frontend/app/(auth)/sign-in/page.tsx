@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -100,8 +101,18 @@ const SignIn = () => {
 
 
     return (
-        <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600' suppressHydrationWarning>
-            <div className='bg-white p-8 rounded-2xl shadow-2xl border-2 border-purple-200 w-full max-w-md'>
+        <div className='flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 p-4' suppressHydrationWarning>
+            <div className='w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-center'>
+                <div className='hidden lg:flex flex-col justify-center items-center bg-white/10 border-2 border-purple-200/40 rounded-2xl p-8 text-white shadow-2xl'>
+                    <div className='w-24 h-24 rounded-2xl bg-white/20 border-2 border-purple-200/50 flex items-center justify-center'>
+                        <Image src='/plm-logo.svg' alt='PLM Logo' width={56} height={56} />
+                    </div>
+                    <h2 className='mt-6 text-2xl font-bold text-center'>PLM</h2>
+                    <p className='mt-2 text-base font-medium text-center text-purple-50 max-w-sm leading-relaxed'>
+                        Engineering Changes, Executed with Control
+                    </p>
+                </div>
+                <div className='bg-white p-8 rounded-2xl shadow-2xl border-2 border-purple-200 w-full max-w-md lg:max-w-none lg:justify-self-end'>
                 <div className='text-center mb-6'>
                     <div className='text-6xl mb-3'>🔐</div>
                     <h1 className='text-3xl font-bold text-purple-600 mb-2'>Sign In</h1>
@@ -218,6 +229,7 @@ const SignIn = () => {
                     <Link href='/sign-up' className='text-purple-600 hover:text-purple-800 text-sm font-bold'>
                         Sign Up
                     </Link>
+                </div>
                 </div>
             </div>
         </div>

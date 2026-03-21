@@ -35,7 +35,7 @@ const AdminPage = async () => {
   }
 
   // Check if user has admin role
-  const isAdmin = user.role === 'admin'
+  const isAdmin = user.role === 'Admin'
   
   if (!isAdmin) {
     // Redirect to forbidden page if user is not admin
@@ -149,7 +149,7 @@ const AdminPage = async () => {
                     <td className='p-3 text-sm text-gray-700'>{u.email}</td>
                     <td className='p-3'>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        u.role === 'admin' 
+                        u.role === 'Admin' 
                           ? 'bg-purple-200 text-purple-800' 
                           : 'bg-blue-200 text-blue-800'
                       }`}>

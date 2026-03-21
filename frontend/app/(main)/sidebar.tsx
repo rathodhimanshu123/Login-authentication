@@ -20,7 +20,7 @@ const Sidebar = () => {
                 setUser({
                     name: userData.name || '',
                     email: userData.email || '',
-                    role: (userData as { role?: string }).role || 'user'
+                    role: (userData as { role?: string }).role || 'Operations User'
                 })
             }
             setIsLoaded(true)
@@ -38,7 +38,7 @@ const Sidebar = () => {
         }
     }
 
-    const isAdmin = user.role === 'admin'
+    const isAdmin = user.role === 'Admin'
 
     return (
         <>

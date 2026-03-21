@@ -6,13 +6,15 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
 const SignUp = () => {
+    const ROLE_OPTIONS = ['Engineering User', 'Approver', 'Operations User', 'Admin'] as const
+    type RoleOption = typeof ROLE_OPTIONS[number]
     const router=useRouter();
     const [error, setError] = useState<string | null>(null)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [role, setRole] = useState<'user' | 'admin'>('admin') // Default to admin since it's first
+    const [role, setRole] = useState<RoleOption>('Engineering User')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -82,12 +84,14 @@ const SignUp = () => {
                         <label className='block text-sm font-semibold mb-2 text-gray-700'>Role:</label>
                         <select
                             value={role}
-                            onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+                            onChange={(e) => setRole(e.target.value as RoleOption)}
                             className='w-full border-2 border-purple-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white cursor-pointer'
                             required
                         >
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
+                            <option value="Engineering User">Engineering User</option>
+                            <option value="Approver">Approver</option>
+                            <option value="Operations User">Operations User</option>
+                            <option value="Admin">Admin</option>
                         </select>
                         <p className='text-xs text-gray-500 mt-1'>Select your account type</p>
                     </div>

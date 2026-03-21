@@ -142,7 +142,7 @@ app.get('/api/users', async (req, res) => {
       headers: req.headers as any
     });
 
-    if (!session || session.user.role !== 'admin') {
+    if (!session || session.user.role !== 'Admin') {
       return res.status(403).json({ error: 'Admin access required' });
     }
 
