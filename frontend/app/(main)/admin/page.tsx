@@ -75,7 +75,7 @@ const AdminPage = async () => {
   const verifiedUsers = users.filter(u => u.emailVerified).length
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8'>
+    <div className='min-h-screen bg-transparent p-8'>
       <div className='max-w-7xl mx-auto'>
         {/* Header */}
         <div className='bg-white p-6 rounded-2xl shadow-lg border-2 border-purple-300 mb-6'>
